@@ -108,9 +108,9 @@ resource "aws_cloudwatch_log_group" "this" {
 ################################################################################
 
 locals {
-  default_capacity_providers = merge(
-    { for k, v in var.fargate_capacity_providers : k => v if var.default_capacity_provider_use_fargate && lookup(v, "default_capacity_provider_strategy", null) != null },
-    { for k, v in var.autoscaling_capacity_providers : k => v if !var.default_capacity_provider_use_fargate && lookup(v, "default_capacity_provider_strategy", null) != null }
+  default_capacity_provider_strategy = merge(
+    { for k, v in var.fargate_capacity_providers : k => merge({ capacity_provider = try(v.name, k) }, v.default_capacity_provider_strategy) if var.default_capacity_provider_use_fargate && try(v.default_capacity_provider_strategy, null) != null },
+    { for k, v in var.autoscaling_capacity_providers : k => merge({ capacity_provider = try(v.name, k) }, v.default_capacity_provider_strategy) if !var.default_capacity_provider_use_fargate && try(v.default_capacity_provider_strategy, null) != null }
   )
 }
 
@@ -125,13 +125,13 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
 
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cluster-capacity-providers.html#capacity-providers-considerations
   dynamic "default_capacity_provider_strategy" {
-    for_each = local.default_capacity_providers
+    for_each = local.default_capacity_provider_strategy
     iterator = strategy
 
     content {
-      capacity_provider = try(strategy.value.name, strategy.key)
-      base              = try(strategy.value.default_capacity_provider_strategy.base, null)
-      weight            = try(strategy.value.default_capacity_provider_strategy.weight, null)
+      capacity_provider = strategy.value.capacity_provider
+      base              = try(strategy.value.base, null)
+      weight            = try(strategy.value.weight, null)
     }
   }
 

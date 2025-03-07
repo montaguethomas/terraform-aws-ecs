@@ -40,6 +40,11 @@ output "cluster_capacity_providers" {
   value       = { for k, v in aws_ecs_cluster_capacity_providers.this : v.id => v }
 }
 
+output "default_capacity_provider_strategy" {
+  description = "Map of the default capacity provider strategies for the cluster"
+  value       = local.default_capacity_provider_strategy
+}
+
 ################################################################################
 # Capacity Provider - Autoscaling Group(s)
 ################################################################################

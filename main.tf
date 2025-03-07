@@ -59,7 +59,7 @@ module "service" {
   # Service
   ignore_task_definition_changes     = try(each.value.ignore_task_definition_changes, false)
   alarms                             = try(each.value.alarms, {})
-  capacity_provider_strategy         = try(each.value.capacity_provider_strategy, {})
+  capacity_provider_strategy         = try(each.value.capacity_provider_strategy, module.cluster.default_capacity_provider_strategy, {})
   cluster_arn                        = module.cluster.arn
   deployment_circuit_breaker         = try(each.value.deployment_circuit_breaker, {})
   deployment_controller              = try(each.value.deployment_controller, {})
