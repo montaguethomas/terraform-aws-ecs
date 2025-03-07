@@ -99,9 +99,9 @@ variable "health_check_grace_period_seconds" {
 }
 
 variable "launch_type" {
-  description = "Launch type on which to run your service. The valid values are `EC2`, `FARGATE`, and `EXTERNAL`. Defaults to `FARGATE`"
+  description = "Launch type on which to run your service. The valid values are `EC2`, `FARGATE`, and `EXTERNAL`. Defaults to `null`"
   type        = string
-  default     = "FARGATE"
+  default     = null
 }
 
 variable "load_balancer" {
