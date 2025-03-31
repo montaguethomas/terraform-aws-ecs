@@ -234,6 +234,13 @@ resource "aws_ecs_service" "this" {
           snapshot_id      = try(managed_ebs_volume.value.snapshot_id, null)
           throughput       = try(managed_ebs_volume.value.throughput, null)
           volume_type      = try(managed_ebs_volume.value.volume_type, null)
+          tag_specifications {
+            resource_type  = "volume"
+            propagate_tags = var.propagate_tags
+            tags = {
+              Name = try(volume_configuration.value.name, volume_configuration.key)
+            }
+          }
         }
       }
     }
@@ -475,6 +482,13 @@ resource "aws_ecs_service" "ignore_task_definition" {
           snapshot_id      = try(managed_ebs_volume.value.snapshot_id, null)
           throughput       = try(managed_ebs_volume.value.throughput, null)
           volume_type      = try(managed_ebs_volume.value.volume_type, null)
+          tag_specifications {
+            resource_type  = "volume"
+            propagate_tags = var.propagate_tags
+            tags = {
+              Name = try(volume_configuration.value.name, volume_configuration.key)
+            }
+          }
         }
       }
     }
