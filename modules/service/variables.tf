@@ -485,6 +485,12 @@ variable "create_tasks_iam_role" {
   default     = true
 }
 
+variable "attach_task_protection_policy" {
+  description = "Determines whether the task protection policy is attached"
+  type        = bool
+  default     = false
+}
+
 variable "tasks_iam_role_arn" {
   description = "Existing IAM role ARN"
   type        = string

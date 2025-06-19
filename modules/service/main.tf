@@ -1086,7 +1086,7 @@ resource "aws_iam_role_policy_attachment" "tasks" {
 }
 
 data "aws_iam_policy_document" "tasks" {
-  count = local.create_tasks_iam_role && (length(var.tasks_iam_role_statements) > 0 || var.enable_execute_command) ? 1 : 0
+  count = local.create_tasks_iam_role && (length(var.tasks_iam_role_statements) > 0 || var.attach_task_protection_policy || var.enable_execute_command) ? 1 : 0
 
   dynamic "statement" {
     for_each = var.enable_execute_command ? [1] : []
@@ -1098,6 +1098,19 @@ data "aws_iam_policy_document" "tasks" {
         "ssmmessages:CreateDataChannel",
         "ssmmessages:OpenControlChannel",
         "ssmmessages:OpenDataChannel",
+      ]
+      resources = ["*"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.attach_task_protection_policy ? [1] : []
+
+    content {
+      sid = "ECSTaskProtection"
+      actions = [
+        "ecs:GetTaskProtection",
+        "ecs:UpdateTaskProtection",
       ]
       resources = ["*"]
     }
@@ -1146,7 +1159,7 @@ data "aws_iam_policy_document" "tasks" {
 }
 
 resource "aws_iam_role_policy" "tasks" {
-  count = local.create_tasks_iam_role && (length(var.tasks_iam_role_statements) > 0 || var.enable_execute_command) ? 1 : 0
+  count = local.create_tasks_iam_role && (length(var.tasks_iam_role_statements) > 0 || var.attach_task_protection_policy || var.enable_execute_command) ? 1 : 0
 
   name        = var.tasks_iam_role_use_name_prefix ? null : local.tasks_iam_role_name
   name_prefix = var.tasks_iam_role_use_name_prefix ? "${local.tasks_iam_role_name}-" : null
