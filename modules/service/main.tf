@@ -1565,5 +1565,5 @@ resource "aws_iam_role_policy_attachment" "infrastructure_iam_role_ebs_policy" {
   count = local.create_infrastructure_iam_role ? 1 : 0
 
   role       = aws_iam_role.infrastructure_iam_role[0].name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRolePolicyForVolumes"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/service-role/AmazonECSInfrastructureRolePolicyForVolumes"
 }
